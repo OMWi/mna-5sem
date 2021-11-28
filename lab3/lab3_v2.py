@@ -3,10 +3,9 @@ import sympy as sp
 from matplotlib import pyplot as plt
 import math
 from scipy import integrate
-from mpl_toolkits.mplot3d import Axes3D
 
 def main():
-    task1()
+    # task1()
 
     # a, b = 1, 1.5
     # ua, ub = 2, 1
@@ -20,19 +19,15 @@ def main():
     #     [50, 100, 50],
     #     [100, 5, 100],
     # ]
-    
-    
-    # 4a
+    # # 4a
     # for k1, k2 in k2_values:
     #     x, y = task2(a, b, ua, ub, None, k1, k2)
     #     show_plot(x, y, f"k: {k1}, {k2}")
-
     # # 4b
     # for k1, k2, k3 in k3_values:
     #     x, y = task2(a, b, ua, ub, None, k1, k2, k3)
     #     show_plot(x, y, f"k: {k1}, {k2}, {k3}")
-
-    #5
+    # # 5
     # sources = [
     #     [(20, a + (b - a) / 2)],
     #     [(30, a + (b - a) / 4), (30, a + 3 * (b - a) / 4)],
@@ -42,48 +37,63 @@ def main():
     #     for src in sources:
     #         x, y = task2(a, b, ua, ub, src, k1, k2)
     #         show_plot(x, y, f'k: {k1}, {k2}\nsources:{src}')
-
     # for k1, k2, k3 in k3_values:
     #     for src in sources:
     #         x, y = task2(a, b, ua, ub, src, k1, k2, k3)
     #         show_plot(x, y, f'k: {k1}, {k2}, {k3}\nsources:{src}')
+            
 
-    # t_values = [0, 5, 20, 100, 200, 500, 1000]
-    # h = 0.1
-    # dt = 0.001
-    # t_values = [0, 5, 20, 100, 200, 500, 1000]
-    # t = 1000 * dt
+    a, b = 1.0, 1.5
+    ua, ub = 2.0, 1.0
+    T = 1
 
-    # a, b = 0.5, 1.5 # kekw
-    # ua, ub = 0, 5
+    fi = lambda x: x ** -3
+    f = lambda x, t: (10 * math.cos(x)) * (1 - math.e ** (-t))
+    k = lambda x: math.cos(x)
+    dk = lambda x: 0
 
-    # # TODO change phi funcs
-    # phi = lambda x: 5 * x - 2.5
-    # x_row, t_row, A = task3(phi, a, b, ua, ub, t, dt, h)
-    # show_plots(x_row, A, t_values)
-    # show_3d_plot(x_row, t_row, A, dt)
-
-    # phi = lambda x: -15*(x - 0.5) ** 2 + 20 * (x - 0.5)
-    # x_row, t_row, A = task3(phi, a, b, ua, ub, t, dt, h)
-    # show_plots(x_row, A, t_values)
-    # show_3d_plot(x_row, t_row, A, dt)
-
-    # phi = lambda x: -15*(x - 0.5) ** 3 + 20 * (x - 0.5) ** 2
-    # x_row, t_row, A = task3(phi, a, b, ua, ub, t, dt, h)
-    # show_plots(x_row, A, t_values)
-    # show_3d_plot(x_row, t_row, A, dt)
+    n = 10
+    h = 0.1
+    tau = 0.001 
+    m = int(T / tau)
 
 
-    # a, b = -1, 1
-    # ua, ub = 0, 5
-    # k = 2
-    # t = 0.1
-    # h = (b - a) / 2
-    # dt = 0.01
+    vector_x = np.linspace(a, b, n + 1)
+    vector_t = np.linspace(0, T, m + 1)
 
-    # x_row, t_row, A = task4(a, b, ua, ub, t, dt, k)
-    # show_plots_2(x_row, A, t, dt)
-    # show_3d_plot_2(x_row, t_row, dt, A)
+    vector_x = np.linspace(a, b, n + 1)
+    vector_t = np.linspace(0, T, m + 1)
+    matrix_u = np.zeros((m + 1, n + 1))
+
+    for i in range(m + 1):
+        matrix_u[i][0] = ua
+        matrix_u[i][n] = ub
+
+    for i in range(n + 1):
+        matrix_u[0][i] = fi(vector_x[i])
+                
+    for i in range(1, m + 1):
+        for j in range(1, n):
+            matrix_u[i][j] = (
+            tau * dk(vector_x[j]) / h * (matrix_u[i - 1][j + 1] - matrix_u[i - 1][j]) +
+            tau * k(vector_x[j]) / (h ** 2) * (matrix_u[i - 1][j + 1] - 2 * matrix_u[i - 1][j] + 
+            matrix_u[i - 1][j - 1]) + tau * f(vector_x[j], vector_t[i - 1]) + matrix_u[i - 1][j]
+            )
+    for i in [0, 5, 20, 200]:
+        plt.plot(vector_x, matrix_u[i], label=f'{i}t')
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+
+    a, b = -1, 1
+    ua, ub = 0, 5
+    k = 2
+    t = 0.1
+    h = (b - a) / 10
+    dt = 0.5 * h**2 / k
+    x_row, t_row, A = task4(a, b, ua, ub, t, dt, k)
+    show_plots_2(x_row, A, t, dt)
 
 
 def task1():
@@ -93,7 +103,7 @@ def task1():
     a, b = 1, 1.5
     ua, ub = 2, 1
     for var in range(1, 4):
-        print('Solving problem set #{}'.format(var))
+        print('Набор #{}'.format(var))
         c, cur_k, cur_ua, cur_ub = get_params(k, ua, ub, var)
         u = solve(cur_k, a, b, cur_ua, cur_ub, f)
         plot_solution(u, a, b, 'k={}'.format(var))
@@ -102,7 +112,7 @@ def task1():
     plt.show()
 
     for var in [1, 4]:
-        print('Solving problem set #{}'.format(var))
+        print('Набор #{}'.format(var))
         c, cur_k, cur_ua, cur_ub = get_params(k, ua, ub, var)
         u = solve(cur_k, a, b, cur_ua, cur_ub, f)
         plot_solution(u, a, b, 'k={}'.format(var))
@@ -111,7 +121,7 @@ def task1():
     plt.show()
 
     for var in [5, 6, 7]:
-        print('Solving problem set #{}'.format(var))
+        print('Набор #{}'.format(var))
         c, cur_k, cur_ua, cur_ub = get_params(k, ua, ub, var)
         u = solve(cur_k, a, b, cur_ua, cur_ub, f)
         plot_solution(u, a, b, 'k={}'.format(var))
@@ -122,7 +132,7 @@ def task1():
 def plot_solution(foo, x1, x2, label):
     x = sp.symbols("x")
     # TODO: change 200 param
-    args = np.linspace(x1, x2, 200)
+    args = np.linspace(x1, x2, 100)
     y = [foo.subs({x: t}) for t in args]
     plt.plot(args, y, label=label)
 
@@ -131,13 +141,12 @@ def solve(k, a, b, ua, ub, f):
     x, c1, c2 = sp.symbols("x,c1,c2")
     u = -sp.integrate(sp.integrate(f, x) / k, x) + c1 * x + c2
     sol = sp.solve([u.subs({x: a}) - ua, u.subs({x: b}) - ub], (c1, c2))
-    print(f'Input data:\nk={k}\na={a}\nb={b}\nua={ua}\nub={ub}\nf={f}')
-    print('Resulting equation:', u)
-    print('Solution:', sol)
-    print('-' * 30)
+    print(f'k={k}\tf={f}\na={a}\tb={b}\tua={ua}\tub={ub}')
+    print(u)
+    print(f'Решение: c1 = {sol[c1]:.5f}\t c2 = {sol[c2]:.5f}')
     print()    
     return u.subs({c1: sol[c1], c2: sol[c2]})
-    
+
 def get_params(k, ua, ub, variant):
     params = [
         (1, k, ua, ub),
@@ -229,25 +238,6 @@ def task3(phi, a, b, ua, ub, t, dt, h):
                           dt * f(x_values[j])*(1 - math.exp(-t_values[i]))
     return x_values, t_values, A
 
-def show_plots(x, A, t_values):
-    for i in t_values:
-        plt.plot(x, A[i], label=fr't={i}$\tau$')
-    plt.grid()
-    plt.legend()
-    plt.xlabel('x', size=14)
-    plt.ylabel('u(x, t)', size=14)
-    plt.show()
-    
-def show_3d_plot(x, t, A, dt):
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    for i in range(len(t) - 1, -1, -50):
-        y = [i * dt] * len(x)
-        z = A[i]
-        ax.plot(x, y, z)
-    plt.show()
-
-
 def task4(a, b, ua, ub, t, dt, k):
     f = lambda x, t: 0
     phi = lambda x: x**2
@@ -275,16 +265,6 @@ def show_plots_2(x, A, t, dt):
     plt.legend()
     plt.xlabel('x', size=14)
     plt.ylabel('u(x, t)', size=14)
-    plt.show()
-    
-def show_3d_plot_2(x, t, dt, A):
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    for i in range(len(t) - 1, - 1, -1):
-        x = x
-        y = [i * dt] * len(x)
-        z = A[i]
-        ax.plot(x, y, z)
     plt.show()
 
 if __name__ == "__main__":

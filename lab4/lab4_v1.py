@@ -13,7 +13,7 @@ g_2 = lambda t: 0.5
 f = lambda x, t: 0
 
 def main():
-    N = 100
+    N = 50
     h = (b - a) / N
     dt = h ** 2 / 6
 
@@ -21,15 +21,11 @@ def main():
     show_plots(x_row, A)
 
     x_row, t_row, A = explicit_2(h, dt)
-    print(len(x_row))
     show_plots(x_row, A)
 
     x_row, t_row, A = implicit_1(h, dt)
     show_plots(x_row, A)
 
-    N = 100
-    h = (b - a) / N
-    dt = (((b - a) / N) ** 2) / 6
     x_row, t_row, A = implicit_2(h, dt)
     show_plots(x_row, A)
 
