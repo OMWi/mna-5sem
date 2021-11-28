@@ -66,12 +66,12 @@ def task1():
     print(f"y({x_0}) = {y_0}\ty({x_n}) = {y_n}")
 
     a, b, c, d = get_coeffs(x_0, x_n, h * 2, q, p, f)
-    y1 = solve_diag(a, b, c, d)
+    y1 = solve_diag_2(a, b, c, d, y_n)
     cur_precision = e + 1
     while cur_precision > e:
         y_prev = np.copy(y1)
         a, b, c, d = get_coeffs(x_0, x_n, h, q, p, f)
-        y1 = solve_diag(a, b, c, d)
+        y1 = solve_diag_2(a, b, c, d, y_n)
         cur_precision = np.max(np.abs([y1[2*i] - y_prev[i] for i in range(len(y_prev))]))
         print(f"Точность: {cur_precision:.6f}, шаг: {h}")
         h /= 2
@@ -80,6 +80,23 @@ def task1():
     plt.plot(x1, y1)
     plt.show()
 
+
+def solve_diag_2(a, b, c, d, y_n):
+    A, B = [-c[0]/b[0]], [d[0]/b[0]]
+    size = len(a)
+
+    for i in range(1, size-1):
+        A.append(-c[i] / (b[i] + a[i]*A[i-1]))
+        B.append((d[i] - a[i]*B[i-1]) / (b[i] + a[i]*A[i-1]))
+
+    A.append(0)
+    B.append((d[size-1] - a[size-1]*B[size-2]) / (b[size-1] +a[size-1]*A[size-2]))
+
+    y = np.zeros(size)
+    y[size-1] = y_n
+    for i in range(size - 2, -1, -1):
+        y[i] = A[i]*y[i+1] + B[i]
+    return y
 
 def task2():
     q = lambda x: 0.25 * (1 - x**2)
@@ -97,12 +114,12 @@ def task2():
     print(f"u({x_0}) = {y_0}\nu({x_n}) = {y_n}")
 
     a, b, c, d = get_coeffs(x_0, x_n, h * 2, q, p, f)
-    y1 = solve_diag(a, b, c, d)
+    y1 = solve_diag_2(a, b, c, d, y_n)
     cur_precision = e + 1
     while cur_precision > e:
         y_prev = np.copy(y1)
         a, b, c, d = get_coeffs(x_0, x_n, h, q, p, f)
-        y1 = solve_diag(a, b, c, d)
+        y1 = solve_diag_2(a, b, c, d, y_n)
         cur_precision = np.max(np.abs([y1[2*i] - y_prev[i] for i in range(len(y_prev))]))
         print(f"Точность: {cur_precision:.6f}, шаг: {h}")
         h /= 2
