@@ -62,8 +62,8 @@ def task1():
 
     print("Задание 1")
     print(f"y'' + y(1 + cos({k})x^2)/sin({k}) = -1/sin({k})")
-    print(f"x ∈ [{x_0}, {x_n}]\n")
-    print(f"y({x_0}) = {y_0}\ty({x_n}) = {y_n}")
+    print(f"x ∈ [{x_0}, {x_n}]")
+    print(f"y({x_0}) = {y_0}\ty({x_n}) = {y_n}\n")
 
     a, b, c, d = get_coeffs(x_0, x_n, h * 2, q, p, f)
     y1 = solve_diag_2(a, b, c, d, y_n)
@@ -110,8 +110,8 @@ def task2():
 
     print("Задание 2")
     print("u'' + 0.25(1-x^2)u' + 5(1+cos^2(x)) = 15cos(x)")
-    print(f"x ∈ [{x_0}, {x_n}]\n")
-    print(f"u({x_0}) = {y_0}\nu({x_n}) = {y_n}")
+    print(f"x ∈ [{x_0}, {x_n}]")
+    print(f"u({x_0}) = {y_0}\nu({x_n}) = {y_n}\n")
 
     a, b, c, d = get_coeffs(x_0, x_n, h * 2, q, p, f)
     y1 = solve_diag_2(a, b, c, d, y_n)
@@ -161,8 +161,8 @@ def task3():
         d[-1] = d[-1] - c[-1] * 3.2 * h / (h + 3)
         c[-1] = 0
 
-        print(f'\nКоличество отрезков: {n}')
-        print("Шаг равен: ", h)
+        print(f'Количество отрезков: {n}')
+        print(f"Шаг равен: {h:.3f}")
 
         current = solve_diag(a, b, c, d)
         # current = solve_diag(a, b, c, d, B)
@@ -186,7 +186,7 @@ def task3():
 
 def check_eps(current, prev, eps):
     eps_t = max([math.fabs(current[i * 2] - prev[i]) for i in range(len(prev))])
-    print(f'Погрешность: {eps_t}')
+    print(f'Погрешность: {eps_t:.6f}')
     if eps_t > eps:
         return False
     return True
@@ -204,7 +204,7 @@ def task4():
     f = lambda x: 8*x / (2 + x**3)
     
     eps = 1e-3
-    n = 16
+    n = 64
     iteration_count = 0
     prev = []
     points = []
@@ -222,7 +222,7 @@ def task4():
         
         if iteration_count != 0:
             print(f'\nКоличество отрезков: {n}')
-            print("Шаг равен: ", h)
+            print(f"Шаг равен: {h:.6f}")
 
         if iteration_count != 0 and check_eps(current, prev, eps):
             break
