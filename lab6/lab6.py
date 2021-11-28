@@ -11,6 +11,7 @@ def main():
     phi = lambda x: (-4 * du / L ** 2) * x ** 2 + (4 * du / L) * x
     nx = 100
     nt = 10000
+    
     A = task1(T, L, E, nx, nt, rho, phi)
 
     x_values = np.linspace(0, L, nx)
